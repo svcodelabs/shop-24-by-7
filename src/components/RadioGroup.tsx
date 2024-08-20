@@ -9,7 +9,7 @@ interface RadioGroupProps {
   options: RadioOptions[];
   name: string;
   onChange: (value: string) => void;
-  className: string;
+  className?: string;
   value: string;
 }
 
@@ -20,10 +20,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   className = "",
   value,
 }) => {
-  // const [selectedValue, setSelectedValue] = useState<string>(value);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // setSelectedValue(e.target.value);
     onChange(e.target.value);
   };
 

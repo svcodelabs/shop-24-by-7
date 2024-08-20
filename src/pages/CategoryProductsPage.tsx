@@ -109,6 +109,7 @@ const CategoryProductsPage: React.FC = () => {
           >
             <FiltersComponent />
           </FilterDrawerComponent>
+
           <div className="w-full pt-3 pb-6 md:pt-5 md:pb-10 lg:pt-7 lg:pb-14">
             <div className="w-full">
               <div className="container mx-auto">

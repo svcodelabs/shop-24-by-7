@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ProductModel } from "../models/ProductModel";
 import LoadingScreen from "./LoadingScreen";
 import { useLoading } from "../hooks/useLoading";
@@ -38,50 +38,31 @@ const HomePage = () => {
     loadingDispatch({ type: "SHOW_LOADING" });
     AOS.init();
     setProductsList(products.slice(1, 30));
-    const newProducts = newArrivalProducts(productsList);
-    setSelectionProdList(newProducts.slice(1, 12));
+    // const newProducts = newArrivalProducts(productsList);
+    // setSelectionProdList(newProducts.slice(1, 12));
     loadingDispatch({ type: "HIDE_LOADING" });
   }, [products, location]);
 
-  useEffect(() => {
+  const discAvg = useMemo(() => {
     const discounts = productsList.map((item) => item.discountPercentage);
     const maxDisc = Math.max(...discounts);
     const minDisc = Math.min(...discounts);
     const avgDisc = Math.round((maxDisc + minDisc) / 2);
-    setDiscountLimit(avgDisc);
+    return avgDisc;
+  }, [productsList]);
 
+  const ratAvg = useMemo(() => {
     const ratings = productsList.map((item) => item.rating);
     const maxRat = Math.max(...ratings);
     const minRat = Math.min(...ratings);
     const avgRat = Math.round((maxRat + minRat) / 2);
-    setRatingLimit(avgRat);
-  }, [productsList, selection, products]);
+    return avgRat;
+  }, [productsList]);
 
-  const handleSelection = (key: string) => {
-    setSelection(key);
-    if (key === "New Arrivals") {
-      const newProducts = newArrivalProducts(productsList);
-      setSelectionProdList(newProducts.slice(1, 12));
-    } else if (key === "Top Offers") {
-      const offerProd = productsList.filter(
-        (prod) => prod.discountPercentage >= discountLimit
-      );
-      if (offerProd.length > 12) {
-        setSelectionProdList(offerProd.slice(0, 12));
-      } else {
-        setSelectionProdList(offerProd);
-      }
-    } else if (key === "Top Rating") {
-      const topRatedProd = productsList.filter(
-        (prod) => prod.rating >= ratingLimit
-      );
-      if (topRatedProd.length > 12) {
-        setSelectionProdList(topRatedProd.slice(0, 12));
-      } else {
-        setSelectionProdList(topRatedProd);
-      }
-    }
-  };
+  useEffect(() => {
+    setDiscountLimit(discAvg);
+    setRatingLimit(ratAvg);
+  }, [discAvg, ratAvg]);
 
   const newArrivalProducts = (list: ProductModel[]) => {
     for (let i = list.length - 1; i > 0; i--) {
@@ -90,6 +71,24 @@ const HomePage = () => {
     }
     return list;
   };
+
+  const filteredProducts = useMemo(() => {
+    if (selection === "New Arrivals") {
+      return newArrivalProducts(productsList).slice(1, 12);
+    } else if (selection === "Top Offers") {
+      return productsList
+        .filter((prod) => prod.discountPercentage >= discountLimit)
+        .slice(0, 12);
+    } else if (selection === "Top Rating") {
+      return productsList
+        .filter((prod) => prod.rating >= ratingLimit)
+        .slice(0, 12);
+    }
+  }, [productsList, selection, discountLimit, ratingLimit]);
+
+  useEffect(() => {
+    setSelectionProdList(filteredProducts ?? []);
+  }, [filteredProducts]);
 
   const handleCategorySelect = (item: CategoryColorModel) => {
     delete item.icon;
@@ -118,7 +117,7 @@ const HomePage = () => {
             {/* Top / New / Sale Products Selector */}
             <SelectionSlider
               selectionItems={selectionItems}
-              onSelectItem={(key) => handleSelection(key)}
+              onSelectItem={(key) => setSelection(key)}
             />
             {/* Products */}
             {selectionProdList.length > 0 ? (

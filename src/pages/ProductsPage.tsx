@@ -37,7 +37,6 @@ const ProductsPage = () => {
       filterDispatch({ type: "CLEAR_RESET" });
     }
     return () => {
-      console.log("Reset");
       filterDispatch({ type: "RESET_FILTERS" });
     };
   }, [filterDispatch]);

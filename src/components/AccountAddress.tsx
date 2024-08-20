@@ -10,7 +10,7 @@ const AccountAddress: React.FC = () => {
     userState: { user },
   } = useAuthContext();
 
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addresses, setAddresses] = useState<Address[]>([user.address]);
   const [selected, setSelected] = useState<Address>(addresses[0]);
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const AccountAddress: React.FC = () => {
                   className="group relative flex cursor-pointer border rounded-lg bg-white/5 py-4 px-5 text-gray-800 shadow-md transition focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-purple-200/10"
                 >
                   <div className="flex w-full items-center justify-between">
-                    <div>
+                    <div className="pr-2 md:pr-4">
                       <p className="mb-2 -mt-1 font-semibold text-gray-800">
                         Home
                       </p>
@@ -57,7 +57,7 @@ const AccountAddress: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    <FaCircleCheck className="size-6 fill-purple-500 opacity-0 transition group-data-[checked]:opacity-100" />
+                    <FaCircleCheck className="size-12 fill-purple-500 opacity-0 transition group-data-[checked]:opacity-100" />
                   </div>
                 </Radio>
               );
@@ -75,9 +75,8 @@ const AccountAddress: React.FC = () => {
 
           <div className="flex mt-5 sm:justify-end md:mt-10 lg:mt-20 save-change-button">
             <button
-              data-variant="formButton"
               className="group text-sm md:text-sm lg:text-base leading-4 inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-semibold text-center justify-center tracking-[0.2px] rounded placeholder-white focus-visible:outline-none focus:outline-none h-11 md:h-[50px] bg-purple-500 text-white font-manrope px-5 lg:px-6 py-4 md:py-3.5 lg:py-4 hover:text-white hover:bg-opacity-90 focus:bg-opacity-70 w-full sm:w-auto"
-              type="submit"
+              type="button"
             >
               Save Changes
             </button>

@@ -1,22 +1,24 @@
+import React, { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/Navbar";
-import HomePage from "./pages/HomePage";
-import CategoriesPage from "./pages/CategoriesPage";
-import ProductsPage from "./pages/ProductsPage";
-import ProductViewPage from "./pages/ProductViewPage";
-import AccountPage from "./pages/AccountPage";
-import LoginPage from "./pages/LoginPage";
-import FavoritePage from "./pages/FavoritePage";
-import CartPage from "./pages/CartPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import RequireAuth from "./pages/RequireAuth";
-import OrdersPage from "./pages/OrdersPage";
-import Missing from "./pages/Missing";
-import CategoryProductsPage from "./pages/CategoryProductsPage";
-import SearchResultsPage from "./pages/SearchResultsPage";
-import NewFiltersComponent from "./components/NewFiltersComponent";
+import LoadingScreen from "./pages/LoadingScreen";
+
+// Lazy load components
+const HomePage = lazy(() => import("./pages/HomePage"));
+const CategoriesPage = lazy(() => import("./pages/CategoriesPage"));
+const CategoryProductsPage = lazy(() => import("./pages/CategoryProductsPage"));
+const ProductsPage = lazy(() => import("./pages/ProductsPage"));
+const SearchResultsPage = lazy(() => import("./pages/SearchResultsPage"));
+const ProductViewPage = lazy(() => import("./pages/ProductViewPage"));
+const CartPage = lazy(() => import("./pages/CartPage"));
+const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
+const AccountPage = lazy(() => import("./pages/AccountPage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const Missing = lazy(() => import("./pages/Missing"));
 
 function App() {
   return (
@@ -34,23 +36,23 @@ function App() {
         pauseOnHover
         theme="colored"
       />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/categories" element={<CategoriesPage />} />
-        <Route path="/categories/:slug" element={<CategoryProductsPage />} />
-        <Route path="/products" element={<ProductsPage />} />
-        <Route path="/searchResults" element={<SearchResultsPage />} />
-        <Route path="/products/:id" element={<ProductViewPage />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/test" element={<NewFiltersComponent />} />
-        <Route element={<RequireAuth />}>
-          {/* <Route path="/my-account/orders" element={<OrdersPage />} />
-          <Route path="/my-account/favorites" element={<FavoritePage />} /> */}
-          <Route path="/my-account/:page" element={<AccountPage />} />
-        </Route>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="*" element={<Missing />} />
-      </Routes>
+      <Suspense fallback={<LoadingScreen />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/categories" element={<CategoriesPage />} />
+          <Route path="/categories/:slug" element={<CategoryProductsPage />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/searchResults" element={<SearchResultsPage />} />
+          <Route path="/products/:id" element={<ProductViewPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route element={<RequireAuth />}>
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/my-account/:page" element={<AccountPage />} />
+          </Route>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="*" element={<Missing />} />
+        </Routes>
+      </Suspense>
     </>
   );
 }

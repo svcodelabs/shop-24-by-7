@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 
 interface FilterDrawerProps {
@@ -12,6 +12,18 @@ const FilterDrawerComponent: React.FC<FilterDrawerProps> = ({
   onClose,
   children,
 }) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    // Cleanup function to reset the overflow when the component unmounts or when isOpen changes
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
   return (
     <>
       {isOpen && (
@@ -39,7 +51,7 @@ const FilterDrawerComponent: React.FC<FilterDrawerProps> = ({
           </div>
 
           {/* Content */}
-          <div className="flex-grow overflow-y-auto p-4">{children}</div>
+          <div className="flex-grow overflow-y-auto px-4 py-2">{children}</div>
 
           {/* Footer */}
           {/* <div className="p-4 border-t">

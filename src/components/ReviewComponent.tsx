@@ -18,13 +18,15 @@ const ReviewComponent: React.FC<ReviewProps> = ({ review }) => {
           <h3 className="text-lg font-semibold text-gray-800">
             {review?.reviewerName}
           </h3>
-          <div className="flex gap-x-2 items-baseline">
-            <RatingComponent rating={Math.round(review?.rating ?? 0)} />(
-            <span className="text-gray-600 font-semibold">
-              {review?.rating}
-            </span>
-            )
-            <p className="flex gap-x-2 text-gray-400 text-[14px] items-baseline mt-2">
+          <div className="flex flex-col md:flex-row gap-x-2 items-baseline">
+            <div className="flex gap-2 items-baseline">
+              <RatingComponent rating={Math.round(review?.rating ?? 0)} />(
+              <span className="text-gray-600 font-semibold">
+                {review?.rating}
+              </span>
+              )
+            </div>
+            <p className="flex gap-x-2 text-gray-400 text-sm items-baseline mt-2">
               {" "}
               <FaRegCalendarAlt />{" "}
               {new Date(review?.date ?? new Date()).toLocaleString()}

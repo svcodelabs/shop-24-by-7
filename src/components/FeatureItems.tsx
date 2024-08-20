@@ -24,7 +24,7 @@ const FeatureItems: React.FC<FeatureProps> = ({
     <div
       className={`container-x mx-auto ${bgColor} ${bgOpacity} ${borderRound}`}
     >
-      <div className=" w-full flex flex-col space-y-4 lg:space-y-0 lg:flex-row lg:justify-between lg:items-center lg:h-[110px] px-10 lg:py-0 py-4">
+      <div className=" w-full flex flex-col space-y-4 lg:space-y-0 lg:flex-row lg:justify-between lg:items-center lg:h-[110px] px-5 md:px-10 lg:py-0 py-4">
         <div className="item px-4">
           <div className="flex space-x-5 items-center">
             <div>

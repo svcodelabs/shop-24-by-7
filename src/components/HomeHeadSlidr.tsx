@@ -73,14 +73,14 @@ const HomeHeadSlider: React.FC<SliderProps> = ({
             />
             <div className="absolute w-3/4 top-1/2 left-12 p-3 md:w-2/3 md:top-1/2 md:left-20 md:p-10 lg:w-1/3 transform -translate-y-1/2  border-gray-50 bg-white bg-opacity-55 rounded-lg">
               <div className="flex flex-col gap-y-2 md:gap-y-4">
-                <h2 className="text-xl font-medium md:text-3xl md:font-bold">
+                <h2 className="text-lg md:text-xl font-medium lg:text-3xl md:font-bold">
                   {slide.title}
                 </h2>
                 <p className="text-base font-medium hidden md:block md:text-xl md:font-medium">
                   {slide.description}
                 </p>
                 <div>
-                  <button className="px-3 py-1 md:px-5 md:py-3 flex-auto bg-purple-600 text-white text-base font-medium rounded-md">
+                  <button className="px-3 py-1 md:px-5 md:py-3 flex-auto bg-purple-600 text-white text-sm md:text-base font-medium rounded-md">
                     {slide.buttonLabel}
                   </button>
                 </div>

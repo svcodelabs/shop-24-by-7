@@ -31,9 +31,9 @@ const ProductImageSlider: React.FC<ImageSliderProps> = ({ images }) => {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto flex">
+    <div className="w-full max-w-lg mx-auto flex flex-col-reverse md:flex-row">
       {/* Thumbnails */}
-      <div className="flex flex-col space-y-2 mr-4">
+      <div className="flex flex-row space-x-2 md:flex-col md:space-y-2 mt-4 md:mr-4">
         {images.map((image, index) => (
           <button
             key={index}
@@ -43,6 +43,8 @@ const ProductImageSlider: React.FC<ImageSliderProps> = ({ images }) => {
             }`}
           >
             <img
+              loading="lazy"
+              decoding="async"
               src={image}
               alt={`Thumbnail ${index + 1}`}
               className="w-full h-full object-contain"
@@ -52,13 +54,15 @@ const ProductImageSlider: React.FC<ImageSliderProps> = ({ images }) => {
       </div>
 
       {/* Main Image */}
-      <div className="relative w-full h-96 rounded-lg flex items-center justify-center overflow-hidden">
+      <div className="relative w-full h-64 md:h-96 rounded-lg flex items-center justify-center overflow-hidden">
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-12 h-12 border-4 border-t-4 border-gray-300 border-t-rose-500 rounded-full animate-spin"></div>
           </div>
         )}
         <img
+          loading="lazy"
+          decoding="async"
           src={images[currentImageIndex]}
           alt={`Product ${currentImageIndex + 1}`}
           className={`w-full h-full object-contain rounded-lg ${

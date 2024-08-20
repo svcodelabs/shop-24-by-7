@@ -13,7 +13,7 @@ const AccountPassword: React.FC = () => {
             <hr />
           </div>
         </div>
-        <div className="w-full min-h-div flex flex-col justify-center items-center px-12 py-4 mx-auto my-4">
+        <div className="w-full min-h-div flex flex-col justify-center items-center px-4 md:px-8 lg:px-12 py-4 mx-auto my-4">
           {/* Content */}
           <form
             className="flex flex-col justify-center w-full mx-auto"

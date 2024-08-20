@@ -6,10 +6,10 @@ import { useLoading } from "../hooks/useLoading";
 import PageLayout from "../layout/PageLayout";
 import LoadingScreen from "./LoadingScreen";
 import { ProductModel } from "../models/ProductModel";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axiosApi from "../api/axios-api";
 import ErrorComponent from "../components/ErrorComponent";
-import { GoHeart } from "react-icons/go";
+import { GoHeart, GoHeartFill } from "react-icons/go";
 import RatingComponent from "../components/RatingComponent";
 import { getPriceAfterDiscount } from "../utils/helpers";
 import { BiSolidOffer } from "react-icons/bi";
@@ -23,20 +23,27 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useProductContext } from "../context/ProductContext";
 import ProductGridSm from "../components/ProductGridSm";
 import NoDataComponent from "../components/NoDataComponent";
+import useAuthContext from "../hooks/useAuthContext";
+import { toast } from "react-toastify";
 
 const ProductViewPage = () => {
   const { loadingState, loadingDispatch } = useLoading();
+  const { auth } = useAuthContext();
   const {
     productState: { products },
+    favoriteState: { favorites },
+    favoriteDispatch,
+    cartDispatch,
+    cartState: { cart },
   } = useProductContext();
   const { id } = useParams();
   const [product, setProduct] = useState<ProductModel | null>(null);
   const [imagesList, setImagesList] = useState<string[]>([]);
   const [error, setError] = useState<string>("");
-  const [quantity, setQuantity] = useState<number>(0);
   const [reviewIndex, setReviewIndex] = useState<number>(0);
   const [relatedProducts, setRelatedProducts] = useState<ProductModel[]>([]);
   const [revRating, setRevRating] = useState<number>(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (products) {
@@ -97,6 +104,27 @@ const ProductViewPage = () => {
     }
   };
 
+  const handleAddFav = (item: ProductModel) => {
+    const isFav = favorites.some((prod) => prod.id === item.id);
+    if (auth?.token) {
+      //Handle add to fav list
+      if (isFav) {
+        favoriteDispatch({ type: "REMOVE_FROM_FAV", payload: item });
+        toast.info("Product removed from favorite list..!");
+      } else {
+        favoriteDispatch({ type: "ADD_TO_FAV", payload: item });
+        toast.success("Product added to favorite list..!");
+      }
+
+      // navigate("/my-account/favorites", { replace: true });
+    } else {
+      toast.warning("Please Login to add to favorites");
+      navigate("/login", { replace: true });
+    }
+  };
+
+  const productCart = cart.find((p) => p.id === product?.id);
+
   return (
     <PageLayout>
       {loadingState.isLoading ? (
@@ -115,8 +143,8 @@ const ProductViewPage = () => {
                 ) : product ? (
                   <div className="w-full flex flex-col gap-y-5">
                     {/* Product Info */}
-                    <div className="w-full flex flex-col gap-y-5 md:flex-row md:gap-x-5 p-6 ">
-                      <div className="w-full md:w-1/2 p-4">
+                    <div className="w-full flex flex-col gap-y-5 md:flex-row md:gap-x-5 p-4 md:p-6">
+                      <div className="w-full md:w-1/2 p-1 md:p-4">
                         <ProductImageSlider images={imagesList} />
                       </div>
                       <div className="w-full md:w-1/2 p-4 bg-white rounded-md shadow-md">
@@ -132,11 +160,20 @@ const ProductViewPage = () => {
                           </div>
                           {/* title & Fav */}
                           <div className="flex justify-between content-center">
-                            <div className="text-4xl font-bold text-gray-700 my-auto">
+                            <div className="text-2xl md:text-3xl lg:text-4xl grow font-bold text-gray-700 my-auto">
                               {product?.title}
                             </div>
-                            <div className="w-12 h-12 rounded-full border-2 border-purple-200 bg-purple-100 flex justify-center items-center cursor-pointer">
-                              <GoHeart className="text-xl text-purple-600" />
+                            <div
+                              className="w-12 h-12 grow-0 rounded-full border-2 border-purple-200 bg-purple-100 flex justify-center items-center cursor-pointer"
+                              onClick={() => handleAddFav(product)}
+                            >
+                              {favorites.some(
+                                (item) => item.id === product?.id
+                              ) ? (
+                                <GoHeartFill className="text-base md:text-lg xl:text-xl text-purple-600" />
+                              ) : (
+                                <GoHeart className="text-base md:text-lg xl:text-xl text-purple-600" />
+                              )}
                             </div>
                           </div>
                           {/* brand */}
@@ -182,32 +219,55 @@ const ProductViewPage = () => {
                           </p>
                           <hr />
                           {/* add cart button */}
-                          <div className="mb-3 w-full lg:mb-0 lg:max-w-[400px]">
-                            {quantity > 0 ? (
-                              <div className="overflow-hidden w-full h-14 rounded text-white bg-purple-500 inline-flex justify-between">
+                          <div className="w-full h-14 lg:mb-0 lg:max-w-[400px]">
+                            {(productCart?.quantity ?? 0) > 0 ? (
+                              <div className="overflow-hidden w-full h-full rounded text-white bg-purple-500 inline-flex justify-between">
                                 <button
                                   className="cursor-pointer transition-colors duration-200 hover:bg-purple-600 focus:outline-0 px-5"
-                                  onClick={() => setQuantity(quantity - 1)}
+                                  onClick={() =>
+                                    cartDispatch({
+                                      type: "CHANGE_CART_QTY",
+                                      payload: {
+                                        ...productCart,
+                                        quantity:
+                                          (productCart?.quantity ?? 0) - 1,
+                                      },
+                                    })
+                                  }
                                 >
                                   <FaMinus />
                                 </button>
                                 <div className="flex flex-1 items-center justify-center px-3 text-base font-semibold">
-                                  {quantity}
+                                  {productCart ? productCart.quantity : "0"}
                                 </div>
                                 <button
                                   className="cursor-pointer transition-colors duration-200 hover:bg-purple-600 focus:outline-0 px-5"
                                   title=""
-                                  onClick={() => setQuantity(quantity + 1)}
+                                  onClick={() =>
+                                    cartDispatch({
+                                      type: "CHANGE_CART_QTY",
+                                      payload: {
+                                        ...productCart,
+                                        quantity:
+                                          (productCart?.quantity ?? 0) + 1,
+                                      },
+                                    })
+                                  }
                                 >
                                   <FaPlus />
                                 </button>
                               </div>
                             ) : (
                               <button
-                                className="flex w-full h-14 items-center justify-center rounded bg-purple-500 py-4 px-5 text-base font-semibold text-white transition-colors duration-300 hover:bg-purple-600 focus:bg-purple-600 focus:outline-0 lg:text-base"
-                                onClick={() => setQuantity(quantity + 1)}
+                                className="flex w-full h-full items-center justify-center rounded bg-purple-600 py-4 px-5 text-base font-semibold text-white transition-colors duration-300 hover:bg-purple-500 focus:bg-purple-500 focus:outline-0 lg:text-base"
+                                onClick={() =>
+                                  cartDispatch({
+                                    type: "ADD_TO_CART",
+                                    payload: product,
+                                  })
+                                }
                               >
-                                <span>Add To Shopping Cart</span>
+                                <span>Add To Cart</span>
                               </button>
                             )}
                           </div>
@@ -251,7 +311,7 @@ const ProductViewPage = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="w-full flex flex-col gap-y-4 md:flex-row md:gap-x-5 p-6 ">
+                    <div className="w-full flex flex-col gap-y-4 md:flex-row md:gap-x-5 p-4 md:p-6">
                       <div className="w-full md:w-1/2 p-4">
                         <div className="flex flex-col gap-y-3 mb-3">
                           <h3 className="text-lg font-bold underline underline-offset-4">

@@ -7,8 +7,9 @@ import useAuthContext from "../hooks/useAuthContext";
 import useLogout from "../hooks/useLogout";
 import { FaCartShopping } from "react-icons/fa6";
 import SearchBar from "./SearchBar";
-import CartDrawerComponent from "./CartDrawerComponent";
 import { MdSearch } from "react-icons/md";
+import CartSidebarComponent from "./CartSidebarComponent";
+import useBreakpoint from "../hooks/useBreakpoint";
 
 const Navbar = () => {
   const { auth } = useAuthContext();
@@ -27,6 +28,7 @@ const Navbar = () => {
   const [isUserView, setIsUserView] = useState<boolean>(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [isSearchShow, setIsSearchShow] = useState<boolean>(false);
+  const breakpoint = useBreakpoint();
 
   useEffect(() => {
     if (auth && auth.token) {
@@ -82,16 +84,18 @@ const Navbar = () => {
       <div className="bg-gray-800 p-4 shadow-md w-full top-0 left-0 relative content-center h-[9vh]">
         <div className="container relative mx-auto flex justify-between items-center">
           {/* Logo */}
-          <div className="flex flex-shrink-0 items-center gap-2 md:gap-4">
-            <FaOpencart className="text-white text-3xl md:text-5xl" />
-            <span className="text-white hidden text-xl md:block md:text-2xl">
-              Shop 24/7
-            </span>
-          </div>
+          <a href="/">
+            <div className="flex flex-shrink-0 items-center gap-2 md:gap-4 cursor-pointer">
+              <FaOpencart className="text-white text-4xl lg:text-5xl" />
+              <span className="text-white hidden text-lg lg:flex md:text-xl lg:text-2xl">
+                Shop 24/7
+              </span>
+            </div>
+          </a>
           {/* Search Bar */}
-          <SearchBar className="hidden md:flex" />
+          <SearchBar className="hidden lg:flex" />
           {/* Nav Menu */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-4">
             <NavLink
               to="/"
               className={
@@ -171,20 +175,6 @@ const Navbar = () => {
                 {isUserView && (
                   <div className="absolute right-0 top-14 h-auto w-32 z-20 bg-gray-800 flex flex-col content-center gap-3 p-3 rounded-md shadow-md transition-all duration-400">
                     <NavLink
-                      to="/my-account/favorites"
-                      className="text-white nav-link-item nav-drop-item [&.active]:text-gray-700 [&.active]:rounded-md [&.active]:bg-purple-300 [&.active]:px-2 [&.active]:py-1 [&.active]:font-bold"
-                      onClick={() => setIsUserView(false)}
-                    >
-                      Favorites
-                    </NavLink>
-                    <NavLink
-                      to="/my-account/orders"
-                      className="text-white nav-link-item nav-drop-item [&.active]:text-gray-700 [&.active]:rounded-md [&.active]:bg-purple-300 [&.active]:px-2 [&.active]:py-1 [&.active]:font-bold"
-                      onClick={() => setIsUserView(false)}
-                    >
-                      Orders
-                    </NavLink>
-                    <NavLink
                       to="/my-account/dashboard"
                       className="text-white nav-link-item nav-drop-item [&.active]:text-gray-700 [&.active]:rounded-md [&.active]:bg-purple-300 [&.active]:px-2 [&.active]:py-1 [&.active]:font-bold"
                       onClick={() => setIsUserView(false)}
@@ -212,26 +202,26 @@ const Navbar = () => {
               </NavLink>
             )}
           </div>
-          {isSearchShow && (
+          {/* Search Bar */}
+          {isSearchShow && (breakpoint === "sm" || breakpoint === "md") && (
             <SearchBar closeSearch={() => setIsSearchShow(false)} />
           )}
           <div
-            className={`flex md:hidden justify-end items-center w-full mr-2 ${
+            className={`flex lg:hidden justify-end items-center w-full mr-2 ${
               isSearchShow ? "hidden" : "flex"
             }`}
           >
             <MdSearch
-              size={32}
-              className="text-white cursor-pointer"
+              className="text-white cursor-pointer text-3xl"
               onClick={() => setIsSearchShow(true)}
             />
           </div>
           <div
-            className="flex md:hidden items-center pr-3 relative cursor-pointer"
+            className="flex lg:hidden items-center pr-3 relative cursor-pointer"
             // onClick={(e) => handleCartClick(e)}
             onClick={() => setIsDrawerOpen(true)}
           >
-            <FaCartShopping size={20} className="text-white" />
+            <FaCartShopping className="text-white text-2xl" />
             {cart.length > 0 && (
               <>
                 <div className="absolute rounded-full top-[-8px] right-[0px] w-4 h-4 bg-yellow-200 flex justify-center content-center">
@@ -242,16 +232,15 @@ const Navbar = () => {
               </>
             )}
           </div>
-          <div className="flex md:hidden items-center space-x-4">
+          <div className="flex lg:hidden items-center space-x-4">
             <CgMenuGridO
-              size={24}
-              className="text-white cursor-pointer"
+              className="text-white cursor-pointer text-3xl"
               onClick={() => setSmOpen(!smOpen)}
             />
           </div>
         </div>
         <div
-          className={`flex flex-col gap-y-3 py-1 md:hidden items-center absolute bg-gray-800 shadow-lg w-60 z-20 transition-all duration-500 ${
+          className={`flex flex-col gap-y-3 py-1 lg:hidden items-center absolute bg-gray-800 shadow-lg w-60 z-20 transition-all duration-500 ${
             smOpen ? "top-16 right-0" : "hidden"
           }`}
         >
@@ -276,29 +265,8 @@ const Navbar = () => {
           >
             Products
           </Link>
-          <Link
-            to="/cart"
-            className="text-white nav-link-item-sm"
-            onClick={() => setSmOpen(false)}
-          >
-            Cart
-          </Link>
           {isLoggedIn ? (
             <>
-              <Link
-                to="/my-account/favorites"
-                className="text-white nav-link-item-sm"
-                onClick={() => setSmOpen(false)}
-              >
-                Favorites
-              </Link>
-              <Link
-                to="/my-account/orders"
-                className="text-white nav-link-item-sm"
-                onClick={() => setSmOpen(false)}
-              >
-                Orders
-              </Link>
               <Link
                 to="/my-account/dashboard"
                 className="text-white nav-link-item-sm"
@@ -326,7 +294,10 @@ const Navbar = () => {
             </Link>
           )}
         </div>
-        <CartDrawerComponent open={isDrawerOpen} setOpen={setIsDrawerOpen} />
+        <CartSidebarComponent
+          isOpen={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+        />
       </div>
     </nav>
   );

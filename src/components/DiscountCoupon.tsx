@@ -44,10 +44,10 @@ const DiscountCoupon: React.FC<DCouponProps> = ({ discount = 18 }) => {
         </div>
         <button
           type="button"
-          className="sm:w-[158px] w-[80px]  h-full bg-purple-500 rounded-tr-md rounded-br-md text-base font-semibold text-white"
+          className="sm:w-[158px] w-auto px-2  h-full bg-purple-500 rounded-tr-md rounded-br-md text-base font-medium md:font-semibold text-white"
           onClick={onHandleSubscribe}
         >
-          Get the Coupon
+          Get Coupon
         </button>
       </div>
     </div>

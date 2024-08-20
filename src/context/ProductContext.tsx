@@ -171,7 +171,7 @@ interface CartState {
 }
 
 interface CartActions {
-  type: "ADD_TO_CART" | "REMOVE_FROM_CART" | "CHANGE_CART_QTY";
+  type: "ADD_TO_CART" | "REMOVE_FROM_CART" | "CHANGE_CART_QTY" | "CLEAR_CART";
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any;
 }
@@ -220,6 +220,8 @@ const cartReducer = (state: CartState, action: CartActions): CartState => {
             : item.quantity
         ),
       };
+    case "CLEAR_CART":
+      return { ...state, cart: [] };
     default:
       return state;
   }

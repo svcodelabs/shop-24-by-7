@@ -15,6 +15,11 @@ interface FilterProps {
   hasCategory?: boolean;
 }
 
+const radioOptions = [
+  { label: "Low to High", value: "low_to_high" },
+  { label: "High to Low", value: "high_to_low" },
+];
+
 const FiltersComponent: React.FC<FilterProps> = ({
   className = "",
   style,
@@ -31,11 +36,6 @@ const FiltersComponent: React.FC<FilterProps> = ({
     filterState: { byPrice, byRating, byShipping, byStock },
   } = useProductContext();
 
-  const radioOptions = [
-    { label: "Low to High", value: "low_to_high" },
-    { label: "High to Low", value: "high_to_low" },
-  ];
-
   const stockCheckboxOptions = stockStatus.map((item) => {
     return { label: item, value: item };
   });
@@ -46,7 +46,10 @@ const FiltersComponent: React.FC<FilterProps> = ({
 
   return (
     <>
-      <div className={`p-3 bg-white rounded-md ${className}`} style={style}>
+      <div
+        className={`px-1 md:px-3 bg-white rounded-md ${className}`}
+        style={style}
+      >
         <div className="flex flex-col gap-y-3">
           {hasCategory && <div className="flex flex-col"></div>}
           {hasPrice && (
@@ -95,9 +98,9 @@ const FiltersComponent: React.FC<FilterProps> = ({
               <RatingComponent
                 rating={byRating}
                 onClick={(i) =>
-                  filterDispatch({ type: "FILTER_BY_RATING", payload: i + 1 })
+                  filterDispatch({ type: "FILTER_BY_RATING", payload: i })
                 }
-                className="pl-2 mt-1 mb-3"
+                className="pl-2 mt-1 mb-1 md:mb-3"
               />
             </div>
           )}
@@ -105,7 +108,7 @@ const FiltersComponent: React.FC<FilterProps> = ({
             <div className="flex flex-col">
               <button
                 type="button"
-                className="mb-6 mt-4 px-6 py-2 bg-rose-500 rounded-md text-white text-base font-semibold active:scale-[.97] active:bg-rose-600 active:duration-300 transition-all hover:scale-[1.03] hover:bg-rose-600  ease-in-out transform"
+                className="mb-4 md:mb-6 mt-2 md:mt-4 px-6 py-2 bg-rose-500 rounded-md text-white text-base font-semibold active:scale-[.97] active:bg-rose-600 active:duration-300 transition-all hover:scale-[1.03] hover:bg-rose-600  ease-in-out transform"
                 onClick={() => filterDispatch({ type: "RESET_FILTERS" })}
               >
                 Reset

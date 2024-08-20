@@ -24,6 +24,7 @@ const ProductGridSm: React.FC<ProdProps> = ({ product }) => {
     favoriteState: { favorites },
   } = useProductContext();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const isFavorite = favorites.some((item) => item.id === product.id);
 
@@ -59,24 +60,35 @@ const ProductGridSm: React.FC<ProdProps> = ({ product }) => {
     <div data-aos="fade-up" className="aos-init aos-animate">
       <div className="group relative border border-gray-100 rounded-md shadow-md overflow-hidden">
         <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-bl-lg rounded-br-lg bg-white lg:aspect-none  lg:h-80">
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-12 h-12 border-4 border-t-4 border-gray-300 border-t-rose-500 rounded-full animate-spin"></div>
+            </div>
+          )}
           <img
+            loading="lazy"
+            decoding="async"
             alt={product.title}
             src={product.thumbnail}
-            className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+            className={`h-full w-full object-cover object-center lg:h-full lg:w-full ${
+              isLoading ? "opacity-0" : "opacity-100"
+            } transition-opacity duration-500 ease-in-out`}
+            onLoad={() => setIsLoading(false)}
+            onError={() => setIsLoading(false)}
           />
         </div>
         <div className="mt-4 px-4 pb-3 flex justify-between">
           <div className="flex flex-col gap-y-2">
             <RatingComponent rating={Math.round(product.rating)} />
             <h3
-              className="text-base font-bold text-gray-700 cursor-pointer hover:text-red-500"
+              className="text-base font-bold text-gray-700 cursor-pointer hover:text-red-500 "
               onClick={() => handleClickView(product)}
             >
               {product.title}
             </h3>
             {product.discountPercentage > 0 ? (
               <p className="flex gap-3">
-                <span className="text-lg line-through font-bold text-gray-600">
+                <span className="text-base line-through font-medium mt-auto text-gray-600">
                   ${product.price}
                 </span>
                 <span className="text-lg font-bold text-rose-500">

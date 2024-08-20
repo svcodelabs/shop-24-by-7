@@ -38,6 +38,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
 import { useNavigate } from "react-router-dom";
+import NoDataComponent from "../components/NoDataComponent";
 
 const CategoriesPage = () => {
   const {
@@ -96,30 +97,33 @@ const CategoriesPage = () => {
 
   return (
     <PageLayout>
-      <BreadcrumbComponent />
       {loadingState?.isLoading ? (
         <LoadingScreen />
       ) : (
-        newCategoryList?.length > 0 && (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-20 py-10 mb-[60px]">
-              {newCategoryList?.map((cat, index) => {
-                return (
-                  <CategoryItem
-                    key={index}
-                    category={cat}
-                    onClickItem={(item) => handleCategorySelect(item)}
-                  />
-                );
-              })}
-            </div>
-
-            <DiscountBanner>
-              <DiscountCoupon discount={21} />
-            </DiscountBanner>
-          </>
-        )
+        <div className="mx-auto max-w-[120rem] px-4 md:px-6 lg:px-8">
+          <div className="container pt-4 md:pt-5 lg:pt-6 xl:pt-7 pb-6 md:pb-10 lg:pb-14 xl:pb-16 2xl:pb-20 xl:max-w-screen-xl 2xl:max-w-[1300px] mx-auto">
+            <BreadcrumbComponent />
+            {newCategoryList?.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 px-4 py-6 mb-[60px]">
+                {newCategoryList?.map((cat, index) => {
+                  return (
+                    <CategoryItem
+                      key={index}
+                      category={cat}
+                      onClickItem={(item) => handleCategorySelect(item)}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <NoDataComponent />
+            )}
+          </div>
+        </div>
       )}
+      <DiscountBanner>
+        <DiscountCoupon discount={21} />
+      </DiscountBanner>
     </PageLayout>
   );
 };

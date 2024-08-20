@@ -28,25 +28,21 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className={className} style={style}>
-      <div className="flex-grow max-w-xs relative">
+    <div className={`grow ${className}`} style={style}>
+      <div className="flex-grow max-w-auto relative mx-2 md:mx-4 lg:mx-8">
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full p-2 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:border-purple-400"
+          className="w-full p-1 lg:p-2 pl-8 lg:pl-10 rounded-lg border border-gray-300 focus:outline-none focus:border-purple-400"
           placeholder="Search..."
         />
         <span className="absolute inset-y-0 left-1 flex items-center pb-3 text-gray-400 rotate-90 cursor-pointer">
-          <IoSearch size={24} />
+          <IoSearch className="text-xl lg:text-2xl" />
         </span>
-        <span
-          className="absolute inset-y-0 right-1 flex items-center px-1 text-gray-300 cursor-pointer"
-          onClick={handleOnSearch}
-        >
+        <span className="absolute inset-y-0 right-1 flex items-center px-1 text-gray-300 cursor-pointer">
           <IoArrowForward
-            size={24}
-            className={`cursor-pointer ${
+            className={`cursor-pointer text-xl lg:text-2xl ${
               searchTerm === ""
                 ? "hidden pointer-events-none cursor-not-allowed"
                 : "lex"
@@ -57,8 +53,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             }}
           />
           <IoClose
-            size={24}
-            className={`md:hidden cursor-pointer ${
+            className={`lg:hidden cursor-pointer text-xl lg:text-2xl ${
               searchTerm === ""
                 ? "flex"
                 : "hidden pointer-events-none cursor-not-allowed"

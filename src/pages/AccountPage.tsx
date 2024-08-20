@@ -1,5 +1,4 @@
 import { FaAngleDown, FaUserCircle } from "react-icons/fa";
-import { useProductContext } from "../context/ProductContext";
 import useAuthContext from "../hooks/useAuthContext";
 import { useLoading } from "../hooks/useLoading";
 import PageLayout from "../layout/PageLayout";
@@ -9,8 +8,8 @@ import { GoHeart } from "react-icons/go";
 import { GrLocation } from "react-icons/gr";
 import { BiSupport } from "react-icons/bi";
 import { MdDashboard, MdLockOutline } from "react-icons/md";
-import { Link, useParams } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import React, { useState } from "react";
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import AccountDashboard from "../components/AccountDashboard";
@@ -20,6 +19,9 @@ import AccountFavorites from "../components/AccountFavorites";
 import AccountAddress from "../components/AccountAddress";
 import AccountHelp from "../components/AccountHelp";
 import AccountPassword from "../components/AccountPassword";
+import DiscountBanner from "../components/DiscountBanner";
+import DiscountCoupon from "../components/DiscountCoupon";
+import useLogout from "../hooks/useLogout";
 
 interface LinkModel {
   label: string;
@@ -105,19 +107,18 @@ const AccountPage: React.FC = () => {
     auth,
     userState: { user },
   } = useAuthContext();
-  const { page } = useParams();
-  const {
-    favoriteState: { favorites },
-  } = useProductContext();
   const {
     loadingState: { isLoading },
   } = useLoading();
-  const [userPage, setUserPage] = useState<string>("");
   const [curLink, setCurLink] = useState<LinkModel>(links[0]);
+  const logout = useLogout();
 
-  useEffect(() => {
-    setUserPage(page ?? "");
-  }, [page]);
+  const signOut = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    await logout();
+  };
 
   return (
     <PageLayout>
@@ -130,7 +131,7 @@ const AccountPage: React.FC = () => {
               <BreadcrumbComponent />
               <div className="flex flex-col w-full lg:flex-row">
                 {/* Small Screen */}
-                <div className="lg:hidden">
+                <div className="lg:hidden mt-4">
                   <Menu as="div" className="relative  w-full font-body">
                     <div>
                       <MenuButton className="relative flex items-center w-full p-1 pr-4 border rounded cursor-pointer text-gray-800 md:p-5 focus:outline-none border-gray-300 gap-x-1.5 bg-white font-semibold justify-between shadow-sm ring-1 ring-inset ring-gray-100 hover:bg-gray-50">
@@ -177,7 +178,10 @@ const AccountPage: React.FC = () => {
                           );
                         })}
                         <MenuItem>
-                          <button className="flex items-center text-base lg:text-lg text-gray-800 py-3.5 px-3.5 xl:px-4 2xl:px-5 mb-1 cursor-pointer hover:bg-gray-200 focus:outline-none">
+                          <button
+                            className="flex items-center text-base lg:text-lg text-gray-800 py-3.5 px-3.5 xl:px-4 2xl:px-5 mb-1 cursor-pointer hover:bg-gray-200 focus:outline-none"
+                            onClick={signOut}
+                          >
                             <span className="flex justify-center w-9 xl:w-10 shrink-0">
                               <MdLockOutline
                                 size={22}
@@ -229,7 +233,10 @@ const AccountPage: React.FC = () => {
                         </Link>
                       );
                     })}
-                    <button className="flex items-center text-base lg:text-lg text-gray-800 py-3.5 px-3.5 xl:px-4 2xl:px-5 mb-1 cursor-pointer hover:bg-gray-200 focus:outline-none">
+                    <button
+                      className="flex items-center text-base lg:text-lg text-gray-800 py-3.5 px-3.5 xl:px-4 2xl:px-5 mb-1 cursor-pointer hover:bg-gray-200 focus:outline-none"
+                      onClick={signOut}
+                    >
                       <span className="flex justify-center w-9 xl:w-10 shrink-0">
                         <MdLockOutline
                           size={22}
@@ -250,10 +257,10 @@ const AccountPage: React.FC = () => {
                           className="w-16 h-w-16 border-2 border-rose-500 rounded-full cursor-pointer relative"
                         />
                         <div>
-                          <p className="text-gray-800 text-lg">
+                          <p className="text-gray-800 text-base md:text-lg">
                             Hello, {user.firstName} {user.lastName}
                           </p>
-                          <h1 className="font-bold text-[24px] text-gray-800">
+                          <h1 className="font-semibold text-xl md:font-bold md:text-2xl text-gray-800">
                             Welcome to your Profile
                           </h1>
                         </div>
@@ -273,6 +280,9 @@ const AccountPage: React.FC = () => {
           </div>
         </>
       )}
+      <DiscountBanner>
+        <DiscountCoupon discount={21} />
+      </DiscountBanner>
     </PageLayout>
   );
 };
