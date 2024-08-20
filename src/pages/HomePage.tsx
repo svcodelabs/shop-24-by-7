@@ -1,23 +1,24 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { ProductModel } from "../models/ProductModel";
 import LoadingScreen from "./LoadingScreen";
 import { useLoading } from "../hooks/useLoading";
 import { useProductContext } from "../context/ProductContext";
-import HorAutoScrollView from "../components/HorAutoScrollView";
 import PageLayout from "../layout/PageLayout";
-import ProductGridSm from "../components/ProductGridSm";
-import HomeHeadSlider from "../components/HomeHeadSlidr";
 import { HomeHeaderSliderData } from "../utils/constants";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import SelectionSlider from "../components/SelectionSlider";
-import DiscountBanner from "../components/DiscountBanner";
-import FeatureItems from "../components/FeatureItems";
 import { CategoryColorModel } from "../models/CategoryModel";
 import { useLocation, useNavigate } from "react-router-dom";
-import NoDataComponent from "../components/NoDataComponent";
 
-const HomePage = () => {
+const NoDataComponent = lazy(() => import("../components/NoDataComponent"));
+const SelectionSlider = lazy(() => import("../components/SelectionSlider"));
+const DiscountBanner = lazy(() => import("../components/DiscountBanner"));
+const FeatureItems = lazy(() => import("../components/FeatureItems"));
+const ProductGridSm = lazy(() => import("../components/ProductGridSm"));
+const HomeHeadSlider = lazy(() => import("../components/HomeHeadSlidr"));
+const HorAutoScrollView = lazy(() => import("../components/HorAutoScrollView"));
+
+const HomePage: React.FC = () => {
   const { loadingState, loadingDispatch } = useLoading();
   const [productsList, setProductsList] = useState<ProductModel[]>([]);
   const selectionItems = ["Top Offers", "New Arrivals", "Top Rating"];
@@ -103,39 +104,55 @@ const HomePage = () => {
         ) : (
           <div>
             {/* Hero Header */}
-            <HomeHeadSlider
-              slides={HomeHeaderSliderData}
-              autoSlide={true}
-              autoSlideInterval={3000}
-            />
+            <Suspense fallback={<LoadingScreen />}>
+              <HomeHeadSlider
+                slides={HomeHeaderSliderData}
+                autoSlide={true}
+                autoSlideInterval={3000}
+              />
+            </Suspense>
+
             {/* Categories */}
-            <HorAutoScrollView
-              categoryList={categories}
-              onCategorySelect={handleCategorySelect}
-            />
+            <Suspense fallback={<LoadingScreen />}>
+              <HorAutoScrollView
+                categoryList={categories}
+                onCategorySelect={handleCategorySelect}
+              />
+            </Suspense>
 
             {/* Top / New / Sale Products Selector */}
-            <SelectionSlider
-              selectionItems={selectionItems}
-              onSelectItem={(key) => setSelection(key)}
-            />
+            <Suspense fallback={<LoadingScreen />}>
+              <SelectionSlider
+                selectionItems={selectionItems}
+                onSelectItem={(key) => setSelection(key)}
+              />
+            </Suspense>
+
             {/* Products */}
             {selectionProdList.length > 0 ? (
               <div className="mx-8 md:mx-16 lg:mx-24 mt-5 md:mt-9 grid grid-cols-1 gap-x-3 md:gap-x-6 gap-y-5 md:gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 mb-14">
                 {selectionProdList.map((product) => {
-                  return <ProductGridSm key={product.id} product={product} />;
+                  return (
+                    <Suspense fallback={<LoadingScreen />}>
+                      {" "}
+                      <ProductGridSm key={product.id} product={product} />
+                    </Suspense>
+                  );
                 })}
               </div>
             ) : (
-              <NoDataComponent />
+              <Suspense fallback={<LoadingScreen />}>
+                <NoDataComponent />
+              </Suspense>
             )}
-            {/* Discount Banner */}
-            <DiscountBanner>
-              <FeatureItems iconColor="text-rose-500" />
-            </DiscountBanner>
           </div>
         )}
       </div>
+      <Suspense fallback={<LoadingScreen />}>
+        <DiscountBanner>
+          <FeatureItems iconColor="text-rose-500" />
+        </DiscountBanner>
+      </Suspense>
     </PageLayout>
   );
 };

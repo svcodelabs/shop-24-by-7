@@ -9,19 +9,20 @@ import { GrLocation } from "react-icons/gr";
 import { BiSupport } from "react-icons/bi";
 import { MdDashboard, MdLockOutline } from "react-icons/md";
 import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import React, { lazy, Suspense, useState } from "react";
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import AccountDashboard from "../components/AccountDashboard";
-import AccountSettings from "../components/AccountSettings";
-import AccountOrders from "../components/AccountOrders";
-import AccountFavorites from "../components/AccountFavorites";
-import AccountAddress from "../components/AccountAddress";
-import AccountHelp from "../components/AccountHelp";
-import AccountPassword from "../components/AccountPassword";
-import DiscountBanner from "../components/DiscountBanner";
-import DiscountCoupon from "../components/DiscountCoupon";
 import useLogout from "../hooks/useLogout";
+
+const DiscountBanner = lazy(() => import("../components/DiscountBanner"));
+const DiscountCoupon = lazy(() => import("../components/DiscountCoupon"));
+const AccountDashboard = lazy(() => import("../components/AccountDashboard"));
+const AccountSettings = lazy(() => import("../components/AccountSettings"));
+const AccountOrders = lazy(() => import("../components/AccountOrders"));
+const AccountFavorites = lazy(() => import("../components/AccountFavorites"));
+const AccountAddress = lazy(() => import("../components/AccountAddress"));
+const AccountHelp = lazy(() => import("../components/AccountHelp"));
+const AccountPassword = lazy(() => import("../components/AccountPassword"));
 
 interface LinkModel {
   label: string;
@@ -267,22 +268,53 @@ const AccountPage: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  {curLink.label === "Dashboard" && <AccountDashboard />}
-                  {curLink.label === "Account Settings" && <AccountSettings />}
-                  {curLink.label === "Orders" && <AccountOrders />}
-                  {curLink.label === "Favorites" && <AccountFavorites />}
-                  {curLink.label === "Address" && <AccountAddress />}
-                  {curLink.label === "Help Center" && <AccountHelp />}
-                  {curLink.label === "Change Password" && <AccountPassword />}
+                  {curLink.label === "Dashboard" && (
+                    <Suspense fallback={<LoadingScreen />}>
+                      <AccountDashboard />
+                    </Suspense>
+                  )}
+                  {curLink.label === "Account Settings" && (
+                    <Suspense fallback={<LoadingScreen />}>
+                      <AccountSettings />
+                    </Suspense>
+                  )}
+                  {curLink.label === "Orders" && (
+                    <Suspense fallback={<LoadingScreen />}>
+                      <AccountOrders />
+                    </Suspense>
+                  )}
+                  {curLink.label === "Favorites" && (
+                    <Suspense fallback={<LoadingScreen />}>
+                      <AccountFavorites />
+                    </Suspense>
+                  )}
+                  {curLink.label === "Address" && (
+                    <Suspense fallback={<LoadingScreen />}>
+                      <AccountAddress />
+                    </Suspense>
+                  )}
+                  {curLink.label === "Help Center" && (
+                    <Suspense fallback={<LoadingScreen />}>
+                      <AccountHelp />
+                    </Suspense>
+                  )}
+                  {curLink.label === "Change Password" && (
+                    <Suspense fallback={<LoadingScreen />}>
+                      <AccountPassword />
+                    </Suspense>
+                  )}
                 </div>
               </div>
             </div>
           </div>
         </>
       )}
-      <DiscountBanner>
-        <DiscountCoupon discount={21} />
-      </DiscountBanner>
+      <Suspense fallback={<LoadingScreen />}></Suspense>
+      <Suspense fallback={<LoadingScreen />}>
+        <DiscountBanner>
+          <DiscountCoupon discount={21} />
+        </DiscountBanner>
+      </Suspense>
     </PageLayout>
   );
 };

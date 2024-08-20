@@ -2,19 +2,22 @@ import { useProductContext } from "../context/ProductContext";
 import { useLoading } from "../hooks/useLoading";
 import PageLayout from "../layout/PageLayout";
 import LoadingScreen from "./LoadingScreen";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { ProductModel } from "../models/ProductModel";
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
-import ProductGridSm from "../components/ProductGridSm";
-import DiscountBanner from "../components/DiscountBanner";
-import DiscountCoupon from "../components/DiscountCoupon";
-import FiltersComponent from "../components/FiltersComponent";
 import Pagination from "../components/Pagination";
-import NoDataComponent from "../components/NoDataComponent";
 import { FaFilter } from "react-icons/fa";
-import FilterDrawerComponent from "../components/FilterDrawerComponent";
+
+const DiscountBanner = lazy(() => import("../components/DiscountBanner"));
+const DiscountCoupon = lazy(() => import("../components/DiscountCoupon"));
+const NoDataComponent = lazy(() => import("../components/NoDataComponent"));
+const FiltersComponent = lazy(() => import("../components/FiltersComponent"));
+const ProductGridSm = lazy(() => import("../components/ProductGridSm"));
+const FilterDrawerComponent = lazy(
+  () => import("../components/FilterDrawerComponent")
+);
 
 const ProductsPage = () => {
   const {
@@ -95,12 +98,15 @@ const ProductsPage = () => {
         <LoadingScreen />
       ) : (
         <>
-          <FilterDrawerComponent
-            isOpen={isDrawerOpen}
-            onClose={() => setIsDrawerOpen(false)}
-          >
-            <FiltersComponent />
-          </FilterDrawerComponent>
+          <Suspense fallback={<LoadingScreen />}>
+            <FilterDrawerComponent
+              isOpen={isDrawerOpen}
+              onClose={() => setIsDrawerOpen(false)}
+            >
+              <FiltersComponent />
+            </FilterDrawerComponent>
+          </Suspense>
+
           <div className="w-full pt-7 pb-14">
             <div className="w-full">
               <div className="container mx-auto">
@@ -111,7 +117,9 @@ const ProductsPage = () => {
                 <div className="flex gap-3">
                   {/* Filter */}
                   <div className="hidden lg:block w-1/4 pl-2 shadow-sm">
-                    <FiltersComponent />
+                    <Suspense fallback={<LoadingScreen />}>
+                      <FiltersComponent />
+                    </Suspense>
                   </div>
 
                   {/* Products */}
@@ -132,23 +140,32 @@ const ProductsPage = () => {
                       <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:gap-x-8">
                         {filteredProducts().map((product) => {
                           return (
-                            <ProductGridSm key={product.id} product={product} />
+                            <Suspense fallback={<LoadingScreen />}>
+                              <ProductGridSm
+                                key={product.id}
+                                product={product}
+                              />
+                            </Suspense>
                           );
                         })}
                       </div>
                     ) : (
-                      <NoDataComponent />
+                      <Suspense fallback={<LoadingScreen />}>
+                        <NoDataComponent />
+                      </Suspense>
                     )}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <DiscountBanner>
-            <DiscountCoupon discount={21} />
-          </DiscountBanner>
         </>
       )}
+      <Suspense fallback={<LoadingScreen />}>
+        <DiscountBanner>
+          <DiscountCoupon discount={21} />
+        </DiscountBanner>
+      </Suspense>
     </PageLayout>
   );
 };

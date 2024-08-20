@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useProductContext } from "../context/ProductContext";
 import { FaXmark } from "react-icons/fa6";
 import CartItemSm from "./CartItemSm";

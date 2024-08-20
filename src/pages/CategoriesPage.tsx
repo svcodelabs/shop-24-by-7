@@ -10,8 +10,15 @@ import {
   Colors400List,
   Colors600List,
 } from "../utils/constants";
-import { ReactElement, useEffect, useState } from "react";
-import CategoryItem from "../components/CategoryItem";
+import {
+  lazy,
+  ReactElement,
+  Suspense,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import { BsCart2 } from "react-icons/bs";
 import { LuBadgePercent } from "react-icons/lu";
 import { HiMiniPaperClip } from "react-icons/hi2";
@@ -32,13 +39,15 @@ import {
   IoShirtOutline,
   IoStarOutline,
 } from "react-icons/io5";
-import DiscountBanner from "../components/DiscountBanner";
-import DiscountCoupon from "../components/DiscountCoupon";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
 import { useNavigate } from "react-router-dom";
-import NoDataComponent from "../components/NoDataComponent";
+
+const DiscountBanner = lazy(() => import("../components/DiscountBanner"));
+const DiscountCoupon = lazy(() => import("../components/DiscountCoupon"));
+const NoDataComponent = lazy(() => import("../components/NoDataComponent"));
+const CategoryItem = lazy(() => import("../components/CategoryItem"));
 
 const CategoriesPage = () => {
   const {
@@ -71,9 +80,7 @@ const CategoriesPage = () => {
     <IoSettingsOutline />,
   ];
 
-  useEffect(() => {
-    AOS.init();
-    loadingDispatch({ type: "SHOW_LOADING" });
+  const loadNewCategoriesList = () => {
     const newList: CategoryColorModel[] = categories.map((item, i) => {
       const newItem: CategoryColorModel = {
         ...item,
@@ -85,12 +92,22 @@ const CategoriesPage = () => {
       };
       return newItem;
     });
+    return newList;
+  };
+
+  const newList: CategoryColorModel[] = useMemo(
+    () => loadNewCategoriesList(),
+    [categories]
+  );
+
+  useEffect(() => {
+    AOS.init();
+    loadingDispatch({ type: "SHOW_LOADING" });
     setNewCategoryList(newList);
     loadingDispatch({ type: "HIDE_LOADING" });
-  }, [categories]);
+  }, [categories, newList]);
 
   const handleCategorySelect = (item: CategoryColorModel) => {
-    console.log(item);
     delete item.icon;
     navigate(`/categories/${item.slug}`, { state: { data: item } });
   };
@@ -107,23 +124,29 @@ const CategoriesPage = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 px-4 py-6 mb-[60px]">
                 {newCategoryList?.map((cat, index) => {
                   return (
-                    <CategoryItem
-                      key={index}
-                      category={cat}
-                      onClickItem={(item) => handleCategorySelect(item)}
-                    />
+                    <Suspense fallback={<LoadingScreen />}>
+                      <CategoryItem
+                        key={index}
+                        category={cat}
+                        onClickItem={(item) => handleCategorySelect(item)}
+                      />
+                    </Suspense>
                   );
                 })}
               </div>
             ) : (
-              <NoDataComponent />
+              <Suspense fallback={<LoadingScreen />}>
+                <NoDataComponent />
+              </Suspense>
             )}
           </div>
         </div>
       )}
-      <DiscountBanner>
-        <DiscountCoupon discount={21} />
-      </DiscountBanner>
+      <Suspense fallback={<LoadingScreen />}>
+        <DiscountBanner>
+          <DiscountCoupon discount={21} />
+        </DiscountBanner>
+      </Suspense>
     </PageLayout>
   );
 };

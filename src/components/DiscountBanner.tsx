@@ -9,7 +9,7 @@ const DiscountBanner: React.FC<DiscountProps> = ({ children }) => {
     <div
       className="w-full h-[307px] bg-cover flex justify-center items-center "
       style={{
-        background: `url('/assets/images/discount-banner-1.jpg') 0% 0% / cover no-repeat`,
+        background: `url('/assets/images/discount-banner-1.avif') 0% 0% / cover no-repeat`,
       }}
     >
       {children}

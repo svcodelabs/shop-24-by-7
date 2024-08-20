@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import { useLoading } from "../hooks/useLoading";
 import PageLayout from "../layout/PageLayout";
 import LoadingScreen from "./LoadingScreen";
-import DiscountBanner from "../components/DiscountBanner";
-import DiscountCoupon from "../components/DiscountCoupon";
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
 import { useProductContext } from "../context/ProductContext";
 import { FaCartShopping } from "react-icons/fa6";
-import CartItemFull from "../components/CartItemFull";
 import { CartProductModel } from "../models/CartModel";
 import { useNavigate } from "react-router-dom";
+
+const DiscountBanner = lazy(() => import("../components/DiscountBanner"));
+const DiscountCoupon = lazy(() => import("../components/DiscountCoupon"));
+const CartItemFull = lazy(() => import("../components/CartItemFull"));
 
 const CartPage: React.FC = () => {
   const {
@@ -46,11 +47,13 @@ const CartPage: React.FC = () => {
                 <div className="w-full md:w-4/6 p-4">
                   {cart.map((item, i) => {
                     return (
-                      <CartItemFull
-                        key={i}
-                        cartItem={item}
-                        onClickView={() => handleViewItem(item)}
-                      />
+                      <Suspense fallback={<LoadingScreen />}>
+                        <CartItemFull
+                          key={i}
+                          cartItem={item}
+                          onClickView={() => handleViewItem(item)}
+                        />
+                      </Suspense>
                     );
                   })}
                 </div>
@@ -127,9 +130,11 @@ const CartPage: React.FC = () => {
           </div>
         </div>
       )}
-      <DiscountBanner>
-        <DiscountCoupon discount={21} />
-      </DiscountBanner>
+      <Suspense fallback={<LoadingScreen />}>
+        <DiscountBanner>
+          <DiscountCoupon discount={21} />
+        </DiscountBanner>
+      </Suspense>
     </PageLayout>
   );
 };

@@ -61,7 +61,7 @@ const ProductViewPage = () => {
       loadingDispatch({ type: "SHOW_LOADING" });
       try {
         await axiosApi
-          .get(`${import.meta.env.VITE_API_URL_PRODUCTS}/${id}`)
+          .get(`https://dummyjson.com/products/${id}`)
           .then((response) => {
             const data: ProductModel = response.data;
             if (isMounted && data) {
@@ -186,7 +186,7 @@ const ProductViewPage = () => {
                             <RatingComponent
                               rating={Math.round(product?.rating ?? 0)}
                             />{" "}
-                            <span className="italic text-gray-400">
+                            <span className="italic text-gray-500">
                               {product?.rating}
                             </span>
                           </div>
@@ -208,13 +208,13 @@ const ProductViewPage = () => {
                               <span>
                                 <BiSolidOffer className="text-[20px] my-auto text-gray-400" />
                               </span>
-                              <span className="text-[16px] my-auto text-gray-500 font-semibold">
+                              <span className="text-[16px] my-auto text-gray-600 font-semibold">
                                 {product?.discountPercentage}%
                               </span>
                             </div>
                           </div>
                           {/* availability */}
-                          <p className="text-gray-400 text-sm italic">
+                          <p className="text-gray-500 text-sm italic">
                             Stock {product?.stock} items available
                           </p>
                           <hr />
@@ -408,12 +408,15 @@ const ProductViewPage = () => {
                                 />
                               </div>
                               <div className="w-full mb-[18px]">
-                                <h6 className="input-label text-gray-400 capitalize text-[13px] font-normal block ">
+                                <label
+                                  htmlFor="comments"
+                                  className="input-label text-gray-400 capitalize text-[13px] font-normal block "
+                                >
                                   Message*
-                                </h6>
+                                </label>
                                 <textarea
-                                  name=""
-                                  id=""
+                                  name="comments"
+                                  id="comments"
                                   rows={2}
                                   className="w-full focus:ring-0 focus:outline-none p-6"
                                 ></textarea>

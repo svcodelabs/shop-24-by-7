@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ProductModel } from "../models/ProductModel";
 import { useLoading } from "../hooks/useLoading";
@@ -6,14 +6,19 @@ import axiosApi from "../api/axios-api";
 import PageLayout from "../layout/PageLayout";
 import LoadingScreen from "./LoadingScreen";
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
-import ErrorComponent from "../components/ErrorComponent";
-import NoDataComponent from "../components/NoDataComponent";
 import Pagination from "../components/Pagination";
-import ProductGridSm from "../components/ProductGridSm";
 import { useProductContext } from "../context/ProductContext";
-import FiltersComponent from "../components/FiltersComponent";
-import DiscountBanner from "../components/DiscountBanner";
-import DiscountCoupon from "../components/DiscountCoupon";
+import { FaFilter } from "react-icons/fa";
+
+const DiscountBanner = lazy(() => import("../components/DiscountBanner"));
+const DiscountCoupon = lazy(() => import("../components/DiscountCoupon"));
+const NoDataComponent = lazy(() => import("../components/NoDataComponent"));
+const ErrorComponent = lazy(() => import("../components/ErrorComponent"));
+const FiltersComponent = lazy(() => import("../components/FiltersComponent"));
+const ProductGridSm = lazy(() => import("../components/ProductGridSm"));
+const FilterDrawerComponent = lazy(
+  () => import("../components/FilterDrawerComponent")
+);
 
 const SearchResultsPage: React.FC = () => {
   const {
@@ -25,6 +30,7 @@ const SearchResultsPage: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [limit, setLimit] = useState<number>(9);
   const [skip, setSkip] = useState<number>(0);
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const {
     filterDispatch,
     filterState: { byPrice, byRating, byShipping, byStock, reset },
@@ -42,7 +48,7 @@ const SearchResultsPage: React.FC = () => {
     loadingDispatch({ type: "SHOW_LOADING" });
     try {
       await axiosApi
-        .get(`${import.meta.env.VITE_API_URL_PRODUCTS}/search?q=${query}`)
+        .get(`https://dummyjson.com/products/search?q=${query}`)
         .then((resp) => {
           setSearchResults(resp.data.products);
         })
@@ -118,6 +124,15 @@ const SearchResultsPage: React.FC = () => {
         <LoadingScreen />
       ) : (
         <>
+          <Suspense fallback={<LoadingScreen />}>
+            <FilterDrawerComponent
+              isOpen={isDrawerOpen}
+              onClose={() => setIsDrawerOpen(false)}
+            >
+              <FiltersComponent />
+            </FilterDrawerComponent>
+          </Suspense>
+
           <div className="w-full pt-7 pb-14">
             <div className="w-full">
               <div className="container mx-auto">
@@ -126,24 +141,34 @@ const SearchResultsPage: React.FC = () => {
 
                 {/* content */}
                 {error !== "" ? (
-                  <ErrorComponent message={error} />
+                  <Suspense fallback={<LoadingScreen />}>
+                    <ErrorComponent message={error} />
+                  </Suspense>
                 ) : searchResults.length <= 0 ? (
-                  <NoDataComponent />
+                  <Suspense fallback={<LoadingScreen />}>
+                    <NoDataComponent />
+                  </Suspense>
                 ) : (
                   <div className="flex gap-3">
                     {/* Filter */}
                     <div className="hidden lg:block w-1/4 pl-2 shadow-sm">
-                      <FiltersComponent />
+                      <Suspense fallback={<LoadingScreen />}>
+                        <FiltersComponent />
+                      </Suspense>
                     </div>
 
                     {/* Products */}
                     <div className="w-full lg:w-3/4 p-3 ">
-                      <div className="p-4 pl-8 flex justify-start bg-white shadow-sm">
+                      <div className="p-4 px-8 flex justify-between bg-white shadow-sm">
                         <Pagination
                           itemsLength={searchResults.length}
                           limit={limit}
                           skip={skip}
                           handlePage={handlePageChanges}
+                        />
+                        <FaFilter
+                          className="cursor-pointer flex lg:hidden text-gray-500"
+                          onClick={() => setIsDrawerOpen(true)}
                         />
                       </div>
                       <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:gap-x-8">
@@ -159,11 +184,13 @@ const SearchResultsPage: React.FC = () => {
               </div>
             </div>
           </div>
-          <DiscountBanner>
-            <DiscountCoupon discount={21} />
-          </DiscountBanner>
         </>
       )}
+      <Suspense fallback={<LoadingScreen />}>
+        <DiscountBanner>
+          <DiscountCoupon discount={21} />
+        </DiscountBanner>
+      </Suspense>
     </PageLayout>
   );
 };

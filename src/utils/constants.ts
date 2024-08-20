@@ -18,21 +18,21 @@ export const HomeHeaderSliderData = [
   {
     title: "Welcome to Shop 24/7",
     description: "Explore our vast collection of products available at your fingertips, anytime, anywhere.",
-    imageUrl: "/assets/images/banner-1.png",
+    imageUrl: "/assets/images/banner-1.avif",
     buttonLabel: "Shop Now",
     buttonUrl: "/shop",
   },
   {
     title: "Summer Sale - Up to 50% Off",
     description: "Don't miss out on our hottest deals of the summer! Limited time only.",
-    imageUrl: "/assets/images/banner-2.png",
+    imageUrl: "/assets/images/banner-2.avif",
     buttonLabel: "Grab the Deals",
     buttonUrl: "/sale",
   },
   {
     title: "New Arrivals Are Here",
     description: "Check out the latest trends in fashion, electronics, and more.",
-    imageUrl: "/assets/images/banner-3.png",
+    imageUrl: "/assets/images/banner-3.avif",
     buttonLabel: "Discover Now",
     buttonUrl: "/new-arrivals",
   }

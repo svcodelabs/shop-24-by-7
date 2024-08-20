@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { useLoading } from "../hooks/useLoading";
 import { Category, ProductModel } from "../models/ProductModel";
@@ -6,14 +6,17 @@ import { useProductContext } from "../context/ProductContext";
 import PageLayout from "../layout/PageLayout";
 import LoadingScreen from "./LoadingScreen";
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
-import FiltersComponent from "../components/FiltersComponent";
 import Pagination from "../components/Pagination";
-import ProductGridSm from "../components/ProductGridSm";
-import NoDataComponent from "../components/NoDataComponent";
-import DiscountBanner from "../components/DiscountBanner";
-import DiscountCoupon from "../components/DiscountCoupon";
 import { FaFilter } from "react-icons/fa";
-import FilterDrawerComponent from "../components/FilterDrawerComponent";
+
+const DiscountBanner = lazy(() => import("../components/DiscountBanner"));
+const DiscountCoupon = lazy(() => import("../components/DiscountCoupon"));
+const NoDataComponent = lazy(() => import("../components/NoDataComponent"));
+const FiltersComponent = lazy(() => import("../components/FiltersComponent"));
+const ProductGridSm = lazy(() => import("../components/ProductGridSm"));
+const FilterDrawerComponent = lazy(
+  () => import("../components/FilterDrawerComponent")
+);
 
 const CategoryProductsPage: React.FC = () => {
   const { slug } = useParams();
@@ -103,12 +106,14 @@ const CategoryProductsPage: React.FC = () => {
         <LoadingScreen />
       ) : (
         <>
-          <FilterDrawerComponent
-            isOpen={isDrawerOpen}
-            onClose={() => setIsDrawerOpen(false)}
-          >
-            <FiltersComponent />
-          </FilterDrawerComponent>
+          <Suspense fallback={<LoadingScreen />}>
+            <FilterDrawerComponent
+              isOpen={isDrawerOpen}
+              onClose={() => setIsDrawerOpen(false)}
+            >
+              <FiltersComponent />
+            </FilterDrawerComponent>
+          </Suspense>
 
           <div className="w-full pt-3 pb-6 md:pt-5 md:pb-10 lg:pt-7 lg:pb-14">
             <div className="w-full">
@@ -120,7 +125,9 @@ const CategoryProductsPage: React.FC = () => {
                 <div className="flex gap-3">
                   {/* Filter */}
                   <div className="hidden lg:block w-1/4 pl-2 shadow-sm">
-                    <FiltersComponent />
+                    <Suspense fallback={<LoadingScreen />}>
+                      <FiltersComponent />
+                    </Suspense>
                   </div>
 
                   {/* Products */}
@@ -144,23 +151,32 @@ const CategoryProductsPage: React.FC = () => {
                       <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:gap-x-8">
                         {filteredProducts().map((product) => {
                           return (
-                            <ProductGridSm key={product.id} product={product} />
+                            <Suspense fallback={<LoadingScreen />}>
+                              <ProductGridSm
+                                key={product.id}
+                                product={product}
+                              />
+                            </Suspense>
                           );
                         })}
                       </div>
                     ) : (
-                      <NoDataComponent />
+                      <Suspense fallback={<LoadingScreen />}>
+                        <NoDataComponent />
+                      </Suspense>
                     )}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <DiscountBanner>
-            <DiscountCoupon discount={21} />
-          </DiscountBanner>
         </>
       )}
+      <Suspense fallback={<LoadingScreen />}>
+        <DiscountBanner>
+          <DiscountCoupon discount={21} />
+        </DiscountBanner>
+      </Suspense>
     </PageLayout>
   );
 };

@@ -74,12 +74,14 @@ const ProductImageSlider: React.FC<ImageSliderProps> = ({ images }) => {
 
         <button
           onClick={handlePrevClick}
+          aria-label="Previous Image"
           className="absolute top-1/2 left-0 transform -translate-y-1/2 p-2 rounded-full bg-white shadow-md"
         >
           <IoArrowBackOutline className="text-purple-500 text-2xl" />
         </button>
         <button
           onClick={handleNextClick}
+          aria-label="Next Image"
           className="absolute top-1/2 right-0 transform -translate-y-1/2 p-2 rounded-full bg-white shadow-md"
         >
           <IoArrowForwardOutline className="text-purple-500 text-2xl" />
