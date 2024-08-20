@@ -12,7 +12,6 @@ import ErrorComponent from "../components/ErrorComponent";
 import { GoHeart, GoHeartFill } from "react-icons/go";
 import RatingComponent from "../components/RatingComponent";
 import { getPriceAfterDiscount } from "../utils/helpers";
-import { BiSolidOffer } from "react-icons/bi";
 import ProductImageSlider from "../components/ProductImageSlider";
 import { FaMinus, FaPlus, FaShippingFast } from "react-icons/fa";
 import { IoPricetagsOutline } from "react-icons/io5";
@@ -191,7 +190,7 @@ const ProductViewPage = () => {
                             </span>
                           </div>
                           {/* Price */}
-                          <div className="flex justify-between">
+                          <div className="flex flex-col md:flex-row justify-between gap-y-2 md:gap-y-0">
                             <p className="flex gap-3 items-baseline">
                               <span className="text-2xl font-bold text-rose-500">
                                 $
@@ -204,14 +203,16 @@ const ProductViewPage = () => {
                                 ${product?.price}
                               </span>
                             </p>
-                            <div className="ml-6 flex gap-1 items-center py-1 px-3 rounded-md bg-gray-100 border-2 border-gray-300">
-                              <span>
-                                <BiSolidOffer className="text-[20px] my-auto text-gray-400" />
-                              </span>
-                              <span className="text-[16px] my-auto text-gray-600 font-semibold">
-                                {product?.discountPercentage}%
-                              </span>
-                            </div>
+                            {/* <div className="">
+                              <div className="ml-1 md:ml-6 flex gap-1 justify-start items-center py-1 px-3 rounded-md bg-gray-100 border-2 border-gray-300">
+                                <span>
+                                  <BiSolidOffer className="text-[20px] my-auto text-gray-400" />
+                                </span>
+                                <span className="text-[16px] my-auto text-gray-600 font-semibold flex-none">
+                                  {product?.discountPercentage}%
+                                </span>
+                              </div>
+                            </div> */}
                           </div>
                           {/* availability */}
                           <p className="text-gray-500 text-sm italic">
